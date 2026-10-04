@@ -1,0 +1,13 @@
+@font-face {
+  font-family: "Nablash Sans";
+  src: url("../public/fonts/OpenSans-Regular.ttf") format("truetype");
+  font-weight: 100 599;
+}
+@font-face {
+  font-family: "Nablash Sans";
+  src: url("../public/fonts/OpenSans-Bold.ttf") format("truetype");
+  font-weight: 600 900;
+}
+* {
+  box-sizing: border-box;
+}
