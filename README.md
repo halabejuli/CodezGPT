@@ -1,1 +1,1 @@
-# CodezGPT
+# CodexGPT
