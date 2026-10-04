@@ -35,26 +35,59 @@ const paths = [
   "M146 408C138 320 195 257 271 257C278 333 212 359 146 408Z",
   "M379 115C401 51 449 21 504 21L504 345C504 380 478 408 445 408C408 408 379 384 379 345Z",
 ];
-const Mark: React.FC<{
+export const Mark: React.FC<{
   color?: string;
   style?: React.CSSProperties;
   outline?: boolean;
-}> = ({ color = C.cream, style, outline = false }) => (
-  <svg
-    viewBox="0 0 504 408"
-    style={{ width: 504, height: 408, overflow: "visible", ...style }}
-  >
-    {paths.map((d, i) => (
-      <path
-        key={i}
-        d={d}
-        fill={outline ? "none" : color}
-        stroke={outline ? color : undefined}
-        strokeWidth={outline ? 1.3 : undefined}
-      />
-    ))}
-  </svg>
-);
+  material?: boolean;
+}> = ({ color = C.cream, style, outline = false, material = false }) => {
+  const id = React.useId().replace(/:/g, "");
+  return (
+    <svg
+      viewBox="0 0 504 408"
+      style={{ width: 504, height: 408, overflow: "visible", ...style }}
+    >
+      <defs>
+        <linearGradient id={`surface${id}`} x1="0" y1="0" x2=".7" y2="1">
+          <stop offset="0" stopColor="#fff8eb" />
+          <stop offset=".5" stopColor={color} />
+          <stop offset="1" stopColor="#d4cdbf" />
+        </linearGradient>
+        <filter id={`grain${id}`}>
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency=".45"
+            numOctaves="2"
+            seed="7"
+            result="noise"
+          />
+          <feComponentTransfer in="noise" result="soft">
+            <feFuncR type="linear" slope=".13" intercept=".87" />
+            <feFuncG type="linear" slope=".13" intercept=".87" />
+            <feFuncB type="linear" slope=".13" intercept=".87" />
+          </feComponentTransfer>
+          <feComposite
+            in="soft"
+            in2="SourceGraphic"
+            operator="in"
+            result="masked"
+          />
+          <feBlend in="SourceGraphic" in2="masked" mode="multiply" />
+        </filter>
+      </defs>
+      {paths.map((d, i) => (
+        <path
+          key={i}
+          d={d}
+          fill={outline ? "none" : material ? `url(#surface${id})` : color}
+          stroke={outline ? color : undefined}
+          strokeWidth={outline ? 1.3 : undefined}
+          filter={material ? `url(#grain${id})` : undefined}
+        />
+      ))}
+    </svg>
+  );
+};
 const letterPaths = [
   "M0 60V0L42 60V0",
   "M0 60L22 0L44 60",
@@ -64,7 +97,7 @@ const letterPaths = [
   "M43 6Q33-3 15 1Q-1 5 1 18Q3 29 23 31Q47 33 44 48Q41 63 21 61Q6 61-1 54",
   "M0 0V60M44 0V60M0 30H44",
 ];
-const Wordmark: React.FC<{ width?: number; color?: string }> = ({
+export const Wordmark: React.FC<{ width?: number; color?: string }> = ({
   width = 740,
   color = C.cream,
 }) => (
@@ -550,7 +583,7 @@ export const Nablash20 = () => {
     <AbsoluteFill
       style={{ fontFamily: "Nablash Sans, sans-serif", background: C.dark }}
     >
-      <Sequence  durationInFrames={90}>
+      <Sequence durationInFrames={90}>
         <One />
       </Sequence>
       <Sequence from={90} durationInFrames={90}>
